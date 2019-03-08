@@ -37,4 +37,34 @@ function turn(squareId, player){
     origBoard[squareId] = player;
     //mark players choice in board
     document.getElementById(squareId).innerText = player;
+
+    let gameWon = checkWin(origBoard, player);
+    if(gameWon){
+        gameOver(gameWon);
+    }
+}
+
+function checkWin(board,player){
+    let plays = board.reduce((a, e, i) => (e === player) ? a.concat(i) : a, []);
+    let gameWon = null;
+    
+    for(let [index,win] of winCombos.entries()){
+        if (win.every(elem => plays.indexOf(elem) > -1)){
+            gameWon = {index: index, player: player};
+            break;
+        }
+    }
+
+    return gameWon;
+}
+
+function gameOver(gameWon){
+    //highlight winning squares
+    for(let index of winCombos[gameWon.index]){
+        document.getElementById(index).style.backgroundColor = gameWon.player == huPlayer ? 'blue':'red';
+    }
+
+    for(var i =0; i< cells.length; i++){
+        cells[i].removeEventListener('click', turnClick, false);
+    }
 }
